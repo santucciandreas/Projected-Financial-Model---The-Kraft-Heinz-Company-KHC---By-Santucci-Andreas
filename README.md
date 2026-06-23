@@ -62,8 +62,7 @@ All financial statements are dynamically linked with no manual balancing plugs.
 - KHC appears to be a deleveraging and normalization story rather than a growth story.
 - Free Cash Flow remains stable throughout the projection period.
 - EBITDA margins recover significantly after the 2024 impairment impact.
-- ROIC remains below the assumed WACC, suggesting continued economic value destruction under the base scenario.
-
+- ROIC remains below the assumed WACC, indicating that the company may continue to destroy economic value despite generating positive accounting profits under the base-case scenario.
 ## Disclaimer
 
 This model was developed for educational and analytical purposes only and should not be considered investment advice.
