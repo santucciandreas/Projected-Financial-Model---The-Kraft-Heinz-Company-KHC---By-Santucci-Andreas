@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kraft Heinz (KHC) — Financial Model Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-700:#16223c; --charcoal:#404040;
+    --gold:#C5A572; --gold-soft:#e8dcc6; --green:#1f8f3b; --green-raw:#008000;
+    --red:#c0392b; --bg:#f5f6f8; --surface:#ffffff;
+    --ink:#1B2A4A; --body:#3a4150; --muted:#8a9099; --line:#e4e7ec;
+    --shadow:0 1px 2px rgba(27,42,74,.06),0 8px 24px rgba(27,42,74,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+  /* ---------- HERO ---------- */
+  .hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--gold)}
+  .hero-inner{max-width:1120px;margin:0 auto;padding:64px 28px 72px}
+  .eyebrow{display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .eyebrow .tick{font-family:'IBM Plex Mono',monospace;border:1px solid rgba(197,165,114,.5);padding:3px 9px;border-radius:3px;letter-spacing:.06em}
+  .verdict{font-family:'Spectral',serif;font-weight:600;font-size:clamp(34px,5.4vw,60px);line-height:1.06;letter-spacing:-.01em;margin:26px 0 0;max-width:18ch}
+  .verdict em{font-style:italic;color:var(--gold)}
+  .lede{margin-top:22px;max-width:62ch;font-size:clamp(15px,1.7vw,18px);color:#c7cedd}
+  .hero-meta{margin-top:34px;display:flex;flex-wrap:wrap;gap:26px;font-size:12.5px;color:#9aa6c0;letter-spacing:.02em}
+  .hero-meta b{color:#e7ecf6;font-weight:600}
+
+  /* ---------- KPI STRIP ---------- */
+  .kpis{max-width:1120px;margin:-38px auto 0;padding:0 28px;position:relative;z-index:2;
+        display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px 16px;box-shadow:var(--shadow)}
+  .kpi .k-label{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kpi .k-val{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-size:30px;font-weight:600;color:var(--ink);margin-top:8px;line-height:1}
+  .kpi .k-val small{font-size:15px;color:var(--muted);font-weight:500;margin-left:2px}
+  .kpi .k-foot{margin-top:9px;font-size:12px;display:flex;align-items:center;gap:7px;color:var(--muted)}
+  .delta{font-family:'IBM Plex Mono',monospace;font-weight:600;padding:1px 7px;border-radius:20px;font-size:11.5px}
+  .delta.up{background:rgba(31,143,59,.12);color:var(--green)}
+  .delta.down{background:rgba(192,57,43,.12);color:var(--red)}
+
+  /* ---------- SECTIONS ---------- */
+  main{padding:60px 0 30px}
+  .section{margin-top:18px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;background:var(--charcoal);color:#fff;
+            padding:13px 22px;border-radius:8px 8px 0 0}
+  .sec-num{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--gold);letter-spacing:.05em}
+  .sec-title{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:16px;letter-spacing:.01em}
+  .sec-body{background:var(--surface);border:1px solid var(--line);border-top:none;border-radius:0 0 10px 10px;
+            display:grid;grid-template-columns:300px 1fr;box-shadow:var(--shadow);overflow:hidden}
+  .sec-note{padding:26px 24px;border-right:1px solid var(--line);background:linear-gradient(180deg,#fbfbfc,#fff)}
+  .sec-note h3{font-family:'Spectral',serif;font-weight:600;font-size:17px;color:var(--ink);margin-bottom:10px;line-height:1.3}
+  .sec-note p{font-size:14px;color:var(--body)}
+  .sec-note .pull{margin-top:16px;padding-top:14px;border-top:1px dashed var(--gold-soft);
+                  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--charcoal)}
+  .sec-note .pull b{color:var(--ink)}
+  .chart{min-height:340px;padding:10px 10px 4px}
+
+  /* ---------- TABLE (collapsible) ---------- */
+  .data{margin-top:40px}
+  details{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+  summary{cursor:pointer;list-style:none;padding:16px 22px;font-weight:600;color:var(--ink);
+          display:flex;align-items:center;justify-content:space-between;font-size:14.5px}
+  summary::-webkit-details-marker{display:none}
+  summary .hint{font-weight:400;color:var(--muted);font-size:12.5px}
+  summary .chev{transition:transform .25s ease;color:var(--gold)}
+  details[open] summary .chev{transform:rotate(180deg)}
+  .tbl-scroll{overflow-x:auto;border-top:1px solid var(--line)}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{padding:9px 14px;text-align:right;white-space:nowrap}
+  th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+  thead th{background:var(--navy);color:#fff;font-weight:600;font-size:12px;letter-spacing:.02em}
+  thead th.est{color:var(--gold)}
+  tbody td{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:var(--body);border-bottom:1px solid var(--line)}
+  tbody td:first-child{font-family:'IBM Plex Sans',sans-serif;color:var(--ink);font-weight:500}
+  tbody tr.grp td{background:#f0f2f6;font-family:'IBM Plex Sans',sans-serif;font-weight:600;color:var(--charcoal);
+                  text-transform:uppercase;font-size:11px;letter-spacing:.06em}
+  td.est{background:#fcfaf5}
+
+  /* ---------- FOOTER ---------- */
+  footer{margin-top:54px;padding:30px 0 50px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between;align-items:center}
+  footer b{color:var(--charcoal)}
+  .legend-dot{display:inline-block;width:22px;height:0;border-top:2px dashed var(--gold);vertical-align:middle;margin-right:6px}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:880px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .sec-body{grid-template-columns:1fr}
+    .sec-note{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media (max-width:520px){
+    .kpis{grid-template-columns:1fr}
+    .wrap,.hero-inner,.kpis{padding-left:18px;padding-right:18px}
+  }
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="tick">NASDAQ · KHC</span><span>Projected Financial Model</span></div>
+    <h1 class="verdict" id="verdict"></h1>
+    <p class="lede" id="lede"></p>
+    <div class="hero-meta">
+      <span>Horizon <b>2022 – 2029E</b></span>
+      <span>Actuals <b>2022–2024</b></span>
+      <span>Projected <b>2025E–2029E</b></span>
+      <span>Model by <b>Andreas Santucci</b></span>
+    </div>
+  </div>
+</header>
+
+<section class="kpis" id="kpis"></section>
+
+<main class="wrap">
+  <div id="sections"></div>
+
+  <section class="data">
+    <details>
+      <summary>
+        <span>Full data table <span class="hint">— all 16 metrics, 2022–2029E</span></span>
+        <span class="chev">▾</span>
+      </summary>
+      <div class="tbl-scroll"><table id="datatable"></table></div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><span class="legend-dot"></span>Dashed gold line marks the actual / projected boundary in every chart.</span>
+    <span><b>Kraft Heinz Co.</b> · Figures from the model's Insights sheet · Built with Plotly</span>
+  </div>
+</footer>
+
+<script>
+const DATA = {"years": ["2022", "2023", "2024", "2025E", "2026E", "2027E", "2028E", "2029E"], "n_actual": 3, "metrics": {"net_sales": {"label": "Net Sales", "unit": "$mm", "fmt": "money", "values": [26485, 26640, 25846, 25768.96, 26019.0395, 26403.993739499994, 26797.063294124997, 27297.66114450337]}, "sales_growth": {"label": "Sales Growth", "unit": "%", "fmt": "pct", "values": [null, 0.005852369265622048, -0.029804804804804852, -0.0029807320281668437, 0.009704679583498965, 0.014795098008902219, 0.014886746243882643, 0.018681071313068953]}, "ebitda": {"label": "EBITDA", "unit": "$mm", "fmt": "money", "values": [3634, 4572, 1683, 5385.71264, 5516.036373999999, 5676.8586539925, 5868.556861413374, 6060.080774079747]}, "ebitda_margin": {"label": "EBITDA Margin", "unit": "%", "fmt": "pct", "values": [0.13720974136303568, 0.17162162162162162, 0.06511645902654183, 0.209, 0.212, 0.21500000000000005, 0.21899999999999997, 0.22199999999999998]}, "net_income": {"label": "Net Income", "unit": "$mm", "fmt": "money", "values": [1219.1287929871883, 2135.479218276906, 1299, 2756.9073791999995, 2862.008163144, 2990.957562969558, 3143.482313226641, 3295.3971124049917]}, "net_margin": {"label": "Net Margin", "unit": "%", "fmt": "pct", "values": [0.04603091534782663, 0.08016063131670068, 0.05025922773349841, 0.10698558960858333, 0.10999668773876145, 0.11327671080663561, 0.11730697049612224, 0.12072085937913951]}, "fcf": {"label": "Free Cash Flow", "unit": "$mm", "fmt": "money", "values": [-916, -1013, 2976, 2476.7174850630126, 2588.8377136727677, 2684.649958734676, 2830.862941445211, 2970.0540312725816]}, "fcf_conversion": {"label": "FCF Conversion", "unit": "%", "fmt": "pct", "values": [-0.25206384149697303, -0.2215660542432196, 1.768270944741533, 0.45986810857086735, 0.4693293405161958, 0.47291118598603443, 0.48237803744538155, 0.4901013933636221]}, "roic": {"label": "ROIC", "unit": "%", "fmt": "pct", "values": [null, 0.040737420733686434, null, 0.04956455406397628, 0.050388839667327955, 0.051445612459790825, 0.05270066640525462, 0.05380983449118571]}, "netdebt_ebitda": {"label": "Net Debt / EBITDA", "unit": "x", "fmt": "mult", "values": [0, 4.075240594925634, 11.013071895424837, 3.3418571910544768, 3.1470867166664234, 2.930281667455362, 2.687872380482544, 2.439551289983714]}, "eps": {"label": "EPS", "unit": "$", "fmt": "dollar", "values": [0.9960202557084872, 1.7532670100795615, 1.087029288702929, 2.3363621857627113, 2.4461608232, 2.578411692215136, 2.7334628810666444, 2.8906992214078873]}, "dividends": {"label": "Dividends Paid", "unit": "$mm", "fmt": "money", "values": [1960, 1965, 1931, 1940, 1950, 1960, 1970, 1980]}, "interest_cov": {"label": "Interest Coverage", "unit": "x", "fmt": "mult", "values": [2.9326818675352877, 3.9594298245614037, 0.805921052631579, 4.927218488888888, 5.146035293559322, 5.407541354213907, 5.713573719038298, 6.029604872412991]}, "dividend_cov": {"label": "Dividend Coverage", "unit": "x", "fmt": "mult", "values": [-0.4673469387755102, -0.5155216284987277, 1.541170378042465, 1.2766584974551611, 1.3276090839347527, 1.3697193667013654, 1.4369862646930005, 1.5000272885215058]}, "payout": {"label": "Payout Ratio", "unit": "%", "fmt": "pct", "values": [1.6077054461140903, 0.920168167960696, 1.4865280985373364, 0.7036870424580423, 0.6813397757251216, 0.6553085287021002, 0.6266935212935507, 0.6008380575884493]}, "debt_capital": {"label": "Total Debt / Capital", "unit": "%", "fmt": "pct", "values": [null, 0.2884834170999006, 0.28717407642943865, 0.2815754747334097, 0.2758946821387579, 0.26987668754528515, 0.2634768935219928, 0.25674989154775374]}}};
+const { years, n_actual, metrics } = DATA;
+const M = metrics;
+
+/* ---------- palette / fonts ---------- */
+const C = {navy:'#1B2A4A', gold:'#C5A572', charcoal:'#404040', green:'#1f8f3b',
+           greenRaw:'#008000', red:'#c0392b', teal:'#2c7a8c', steel:'#7d8aa3',
+           grid:'#eef0f4', ink:'#1B2A4A', muted:'#8a9099'};
+const FONT = "'IBM Plex Sans', sans-serif";
+const MONO = "'IBM Plex Mono', monospace";
+const DIVIDER_X = n_actual - 0.5;  // categorical position between last actual & first projected
+
+/* ---------- formatting helpers ---------- */
+const fmt = {
+  money:v=>v==null?'–':(v<0?'-$':'$')+Math.abs(v).toLocaleString('en-US',{maximumFractionDigits:0}),
+  moneyB:v=>v==null?'–':(v<0?'-$':'$')+(Math.abs(v)/1000).toFixed(1)+'B',
+  pct:v=>v==null?'–':(v*100).toFixed(1)+'%',
+  mult:v=>v==null?'–':v.toFixed(1)+'x',
+  dollar:v=>v==null?'–':'$'+v.toFixed(2),
+};
+function fval(key,v){return fmt[M[key].fmt](v);}
+function lastIdx(key){const a=M[key].values;for(let i=a.length-1;i>=0;i--)if(a[i]!=null)return i;return -1;}
+
+/* ---------- hero copy ---------- */
+document.getElementById('verdict').innerHTML =
+  'Flat sales, a <em>sharper engine</em>.';
+document.getElementById('lede').textContent =
+  "Revenue holds near $26–27bn, so the model's real story is profitability and the balance sheet: "
+  + "EBITDA margins rebuild from a 2024 trough toward ~22%, free cash flow turns durably positive, "
+  + "and net leverage falls below 2.5× — reshaping Kraft Heinz into a stronger cash generator through 2029E.";
+
+/* ---------- KPI cards ----------
+   Each KPI declares its own baseline + delta unit so the comparison is honest:
+   margins -> percentage points, multiples -> 'x', earnings/cash -> percent.   */
+const KPIS = [
+  {key:'ebitda_margin', label:'EBITDA Margin', good:'up',   baseIdx:2, dtype:'pp',  cmp:'vs 2024'},
+  {key:'fcf',           label:'Free Cash Flow', good:'up',   baseIdx:3, dtype:'pct', cmp:"'25E → '29E", big:true},
+  {key:'netdebt_ebitda',label:'Net Debt / EBITDA', good:'down', baseIdx:2, dtype:'x', cmp:'vs 2024'},
+  {key:'eps',           label:'EPS', good:'up',              baseIdx:2, dtype:'pct', cmp:'vs 2024'},
+];
+const deltaFmt = {
+  pp:(b,c)=>((c-b)*100>=0?'+':'')+((c-b)*100).toFixed(1)+'pp',
+  x: (b,c)=>((c-b)>=0?'+':'')+(c-b).toFixed(1)+'x',
+  pct:(b,c)=>((c-b)/Math.abs(b)*100>=0?'+':'')+((c-b)/Math.abs(b)*100).toFixed(0)+'%',
+};
+const kpiWrap = document.getElementById('kpis');
+KPIS.forEach(k=>{
+  const arr = M[k.key].values, li = lastIdx(k.key);
+  const cur = arr[li], base = arr[k.baseIdx];
+  let dStr='—', cls='';
+  if(base!=null && cur!=null){
+    const rising = cur>base;
+    cls = ((k.good==='up') ? rising : !rising) ? 'up' : 'down';
+    dStr = deltaFmt[k.dtype](base, cur);
+  }
+  const valStr = (k.key==='fcf') ? fmt.moneyB(cur) : fval(k.key,cur);
+  kpiWrap.insertAdjacentHTML('beforeend', `
+    <div class="kpi">
+      <div class="k-label">${k.label}</div>
+      <div class="k-val">${valStr}</div>
+      <div class="k-foot"><span class="delta ${cls}">${dStr}</span><span>${k.cmp}</span></div>
+    </div>`);
+});
+
+/* ---------- section definitions ---------- */
+const SECTIONS = [
+  {n:'01', title:'Growth & Profitability',
+   head:'Profitability, not growth, is the story',
+   note:"Net sales stay essentially flat near $26–27bn. After a sharp 2024 dip, EBITDA margin rebuilds from ~6.5% toward roughly 22% by 2029E — the engine, not the top line, drives value.",
+   pull:'EBITDA margin <b>6.5% → 22.2%</b>', render:chartGrowth},
+  {n:'02', title:'Cash Generation',
+   head:'A cash engine that finally turns over',
+   note:"Free cash flow swings from negative in 2022–23 to consistently positive from 2024 onward, with conversion stabilizing near 47–49% — a far more reliable cash profile.",
+   pull:'FCF conversion settles <b>~47–49%</b>', render:chartCash},
+  {n:'03', title:'Efficiency & Solvency',
+   head:'Deleveraging is the balance-sheet thesis',
+   note:"ROIC climbs steadily toward ~5.4%, while net leverage collapses from a 2024 spike of 11× down to about 2.4× EBITDA — a clear, multi-year deleveraging path.",
+   pull:'Net leverage <b>11.0× → 2.4×</b>', render:chartSolvency},
+  {n:'04', title:'Shareholder Returns',
+   head:'Steady dividend, recovering earnings',
+   note:"Dividends hold steady near $1.9–2.0bn while EPS nearly triples off the 2024 trough, pulling the payout ratio back to a sustainable ~60%.",
+   pull:'Payout ratio <b>149% → 60%</b>', render:chartReturns},
+  {n:'05', title:'Risk Analysis',
+   head:'Coverage strengthens across the board',
+   note:"Interest coverage rises above 6× and dividend coverage holds above 1.3×, easing the balance-sheet risk that peaked in the weak 2024 results.",
+   pull:'Interest coverage <b>0.8× → 6.0×</b>', render:chartRisk},
+];
+
+const layoutBase = () => ({
+  font:{family:FONT, size:12, color:C.charcoal},
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  margin:{l:54,r:54,t:18,b:34},
+  hovermode:'x unified',
+  hoverlabel:{font:{family:MONO,size:12}, bgcolor:'#fff', bordercolor:C.line},
+  legend:{orientation:'h', y:-0.16, x:0.5, xanchor:'center', font:{size:11.5}},
+  xaxis:{type:'category', tickfont:{family:MONO,size:11.5,color:C.charcoal}, showgrid:false,
+         linecolor:C.line, ticks:'outside', tickcolor:C.line},
+  shapes:[
+    {type:'rect', xref:'x', yref:'paper', x0:DIVIDER_X, x1:years.length-0.5, y0:0, y1:1,
+     fillcolor:'rgba(197,165,114,0.06)', line:{width:0}, layer:'below'},
+    {type:'line', xref:'x', yref:'paper', x0:DIVIDER_X, x1:DIVIDER_X, y0:0, y1:1,
+     line:{color:C.gold, width:1.5, dash:'dash'}},
+  ],
+  annotations:[
+    {x:DIVIDER_X, y:1.02, xref:'x', yref:'paper', text:'PROJECTED →', showarrow:false,
+     font:{family:MONO,size:10,color:C.gold}, xanchor:'left'}
+  ],
+});
+const yAxis = (title,extra={}) => Object.assign({
+  title:{text:title, font:{size:11,color:C.muted}}, gridcolor:C.grid, zeroline:false,
+  tickfont:{family:MONO,size:11,color:C.muted}, showline:false}, extra);
+const CONFIG = {displayModeBar:false, responsive:true};
+
+function chartGrowth(el){
+  const t = [
+    {type:'bar', name:'Net Sales', x:years, y:M.net_sales.values, marker:{color:C.navy},
+     hovertemplate:'%{y:$,.0f}mm<extra>Net Sales</extra>'},
+    {type:'bar', name:'EBITDA', x:years, y:M.ebitda.values, marker:{color:C.gold},
+     hovertemplate:'%{y:$,.0f}mm<extra>EBITDA</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'EBITDA Margin', x:years, y:M.ebitda_margin.values,
+     yaxis:'y2', line:{color:C.green,width:2.5}, marker:{size:6},
+     hovertemplate:'%{y:.1%}<extra>EBITDA Margin</extra>'},
+  ];
+  const lay = Object.assign(layoutBase(), {
+    barmode:'group', bargap:0.32, bargroupgap:0.08,
+    yaxis:yAxis('$mm'),
+    yaxis2:Object.assign(yAxis('Margin'),{overlaying:'y',side:'right',tickformat:'.0%',showgrid:false}),
+  });
+  Plotly.newPlot(el, t, lay, CONFIG);
+}
+function chartCash(el){
+  const colors = M.fcf.values.map(v=> v==null?C.muted : (v<0?C.red:C.green));
+  const t = [
+    {type:'bar', name:'Free Cash Flow', x:years, y:M.fcf.values, marker:{color:colors},
+     hovertemplate:'%{y:$,.0f}mm<extra>FCF</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'FCF Conversion', x:years, y:M.fcf_conversion.values,
+     yaxis:'y2', line:{color:C.gold,width:2.5}, marker:{size:6},
+     hovertemplate:'%{y:.0%}<extra>Conversion</extra>'},
+  ];
+  const lay = Object.assign(layoutBase(), {
+    yaxis:yAxis('$mm'),
+    yaxis2:Object.assign(yAxis('Conversion'),{overlaying:'y',side:'right',tickformat:'.0%',showgrid:false}),
+  });
+  Plotly.newPlot(el, t, lay, CONFIG);
+}
+function chartSolvency(el){
+  const t = [
+    {type:'scatter', mode:'lines+markers', name:'Net Debt / EBITDA', x:years, y:M.netdebt_ebitda.values,
+     line:{color:C.navy,width:2.5}, marker:{size:6}, fill:'tozeroy', fillcolor:'rgba(27,42,74,0.06)',
+     hovertemplate:'%{y:.1f}x<extra>Net Debt/EBITDA</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'ROIC', x:years, y:M.roic.values,
+     yaxis:'y2', line:{color:C.gold,width:2.5}, marker:{size:6},
+     hovertemplate:'%{y:.1%}<extra>ROIC</extra>'},
+  ];
+  const lay = Object.assign(layoutBase(), {
+    yaxis:yAxis('Leverage (x)'),
+    yaxis2:Object.assign(yAxis('ROIC'),{overlaying:'y',side:'right',tickformat:'.0%',showgrid:false}),
+  });
+  Plotly.newPlot(el, t, lay, CONFIG);
+}
+function chartReturns(el){
+  const t = [
+    {type:'bar', name:'Dividends Paid', x:years, y:M.dividends.values, marker:{color:C.steel},
+     hovertemplate:'%{y:$,.0f}mm<extra>Dividends</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'EPS', x:years, y:M.eps.values,
+     yaxis:'y2', line:{color:C.gold,width:2.5}, marker:{size:6},
+     hovertemplate:'$%{y:.2f}<extra>EPS</extra>'},
+  ];
+  const lay = Object.assign(layoutBase(), {
+    yaxis:yAxis('$mm'),
+    yaxis2:Object.assign(yAxis('EPS ($)'),{overlaying:'y',side:'right',tickprefix:'$',showgrid:false}),
+  });
+  Plotly.newPlot(el, t, lay, CONFIG);
+}
+function chartRisk(el){
+  const t = [
+    {type:'scatter', mode:'lines+markers', name:'Interest Coverage', x:years, y:M.interest_cov.values,
+     line:{color:C.navy,width:2.5}, marker:{size:6}, hovertemplate:'%{y:.1f}x<extra>Interest Cov.</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'Dividend Coverage', x:years, y:M.dividend_cov.values,
+     line:{color:C.gold,width:2.5}, marker:{size:6}, hovertemplate:'%{y:.1f}x<extra>Dividend Cov.</extra>'},
+    {type:'scatter', mode:'lines+markers', name:'Payout Ratio', x:years, y:M.payout.values,
+     yaxis:'y2', line:{color:C.teal,width:2,dash:'dot'}, marker:{size:5},
+     hovertemplate:'%{y:.0%}<extra>Payout</extra>'},
+  ];
+  const lay = Object.assign(layoutBase(), {
+    yaxis:yAxis('Coverage (x)'),
+    yaxis2:Object.assign(yAxis('Payout'),{overlaying:'y',side:'right',tickformat:'.0%',showgrid:false}),
+  });
+  Plotly.newPlot(el, t, lay, CONFIG);
+}
+
+/* ---------- build sections ---------- */
+const secWrap = document.getElementById('sections');
+SECTIONS.forEach((s,i)=>{
+  const id = 'chart-'+i;
+  secWrap.insertAdjacentHTML('beforeend', `
+    <section class="section">
+      <div class="sec-head"><span class="sec-num">${s.n}</span><span class="sec-title">${s.title}</span></div>
+      <div class="sec-body">
+        <div class="sec-note">
+          <h3>${s.head}</h3>
+          <p>${s.note}</p>
+          <div class="pull">${s.pull}</div>
+        </div>
+        <div class="chart" id="${id}"></div>
+      </div>
+    </section>`);
+});
+
+/* ---------- data table ---------- */
+const GROUPS = [
+  ['1 · Growth & Profitability', ['net_sales','sales_growth','ebitda','ebitda_margin','net_income','net_margin']],
+  ['2 · Cash Generation', ['fcf','fcf_conversion']],
+  ['3 · Efficiency & Solvency', ['roic','netdebt_ebitda']],
+  ['4 · Shareholder Returns', ['eps','dividends']],
+  ['5 · Risk Analysis', ['interest_cov','dividend_cov','payout','debt_capital']],
+];
+const tbl = document.getElementById('datatable');
+let head = '<thead><tr><th>Metric</th><th>Unit</th>';
+years.forEach((y,i)=> head += `<th class="${i>=n_actual?'est':''}">${y}</th>`);
+head += '</tr></thead>';
+let body = '<tbody>';
+GROUPS.forEach(([g,keys])=>{
+  body += `<tr class="grp"><td colspan="${years.length+2}">${g}</td></tr>`;
+  keys.forEach(k=>{
+    body += `<tr><td>${M[k].label}</td><td class="num" style="color:var(--muted)">${M[k].unit}</td>`;
+    M[k].values.forEach((v,i)=> body += `<td class="${i>=n_actual?'est':''}">${fval(k,v)}</td>`);
+    body += '</tr>';
+  });
+});
+body += '</tbody>';
+tbl.innerHTML = head + body;
+
+/* ---------- render charts when visible (lazy) ---------- */
+const io = new IntersectionObserver((entries,obs)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const i = +e.target.dataset.idx;
+      SECTIONS[i].render(document.getElementById('chart-'+i));
+      obs.unobserve(e.target);
+    }
+  });
+},{rootMargin:'120px'});
+SECTIONS.forEach((s,i)=>{const c=document.getElementById('chart-'+i);c.dataset.idx=i;io.observe(c);});
+window.addEventListener('resize',()=>{document.querySelectorAll('.chart').forEach(c=>{if(c.data)Plotly.Plots.resize(c);});});
+</script>
+</body>
+</html>
