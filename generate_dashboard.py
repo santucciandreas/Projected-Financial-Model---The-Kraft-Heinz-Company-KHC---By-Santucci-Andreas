@@ -192,7 +192,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <header class="topbar">
   <div class="wrap">
     <div class="brand"><span class="mark">KHC</span><span class="brand-sub"><b>Kraft Heinz</b> · Projected Financial Model</span></div>
-    <div class="topbar-meta"><span class="pill">Base case</span><span>FY2022 – 2029E</span></div>
+    <div class="topbar-meta"><span style="font-size:12px;color:#7a849b">By <b style="color:#aeb7cb;font-weight:600">Andreas Santucci</b></span><span class="pill">Base case</span><span>FY2022 – 2029E</span></div>
   </div>
 </header>
 
@@ -222,7 +222,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <footer>
   <div class="wrap">
     <span><span class="legend-dot"></span>Dashed gold line marks the actual / projected boundary in every chart.</span>
-    <span><b>Kraft Heinz Co.</b> · Figures from the model's Insights sheet · Built with Plotly</span>
+    <span><b>Kraft Heinz Co.</b> · Figures from the model's Insights sheet · Model &amp; dashboard by <b>Andreas Santucci</b> · May 2026</span>
   </div>
 </footer>
 
