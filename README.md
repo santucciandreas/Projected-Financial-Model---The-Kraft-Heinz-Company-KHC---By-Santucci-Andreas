@@ -16,7 +16,7 @@ An accompanying **interactive web dashboard** turns the model's KPIs into a visu
 
 A single-page, interactive dashboard built on top of the model's `Insights` sheet, designed for quick review by recruiters and analysts. It presents a headline read on the company, four key metrics, and five themed sections — each with an interactive chart and a short interpretive note.
 
-**[▶ View the dashboard](./index.html)** — open `index.html`, or enable GitHub Pages.
+**[▶ View the dashboard](https://santucciandreas.github.io/Projected-Financial-Model---The-Kraft-Heinz-Company-KHC---By-Santucci-Andreas/)** — open `index.html`, or enable GitHub Pages.
 
 | Section | Focus |
 |---|---|
